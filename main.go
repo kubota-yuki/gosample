@@ -4,14 +4,18 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
 	fmt.Println("サーバースタート([Ctrl]+[C]で終了")
 
 	http.HandleFunc("/", handler)
-
-	err := http.ListenAndServe(":8000", nil)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	err := http.ListenAndServe(":"+port, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
