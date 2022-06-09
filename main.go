@@ -1,16 +1,20 @@
 package main
 
 import (
-	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
 )
 
-func main() {
-	fmt.Println("サーバースタート([Ctrl]+[C]で終了")
+func index(w http.ResponseWriter, r *http.Request) {
+	t, _ := template.ParseFiles("index.html")
+	t.Execute(w, nil)
+}
 
-	http.HandleFunc("/", handler)
+func main() {
+
+	http.HandleFunc("/", index)
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -18,17 +22,5 @@ func main() {
 	err := http.ListenAndServe(":"+port, nil)
 	if err != nil {
 		log.Fatal(err)
-	}
-}
-
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "<html>\n<body>\n")
-	fmt.Fprintf(w, "<h1>httpserverへようこそ</h1>\n")
-	fmt.Fprintf(w, "<p>サーバーは:%q</p>\n", r.Host)
-	fmt.Fprintf(w, "<p>リモートアドレスは:%q</p>\n", r.RemoteAddr)
-	fmt.Fprintf(w, "</body>\n</html>\n")
-
-	if err := r.ParseForm(); err != nil {
-		log.Print(err)
 	}
 }
