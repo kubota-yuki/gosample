@@ -13,8 +13,10 @@ func index(w http.ResponseWriter, r *http.Request) {
 }
 
 func result(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	hoge := r.FormValue("hoge")
 	t, _ := template.ParseFiles("result.html")
-	t.Execute(w, nil)
+	t.Execute(w, hoge)
 }
 
 func main() {
