@@ -2,7 +2,9 @@ package main
 
 import (
 	"html/template"
+	"log"
 	"net/http"
+	"os"
 )
 
 func index(w http.ResponseWriter, r *http.Request) {
@@ -17,25 +19,16 @@ func result(w http.ResponseWriter, r *http.Request) {
 	t.Execute(w, hoge)
 }
 
-// func main() {
-
-// 	http.HandleFunc("/", index)
-// 	http.HandleFunc("/result", result)
-// 	port := os.Getenv("PORT")
-// 	if port == "" {
-// 		port = "8080"
-// 	}
-// 	err := http.ListenAndServe(":"+port, nil)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// }
-
 func main() {
-	server := http.Server{
-		Addr: "localhost:8080",
-	}
+
 	http.HandleFunc("/", index)
 	http.HandleFunc("/result", result)
-	server.ListenAndServe()
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	err := http.ListenAndServe(":"+port, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
