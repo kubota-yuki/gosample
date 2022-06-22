@@ -7,19 +7,19 @@ import (
 	"os"
 )
 
-func index(w http.ResponseWriter, r *http.Request) {
+func index__(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseFiles("index.html")
 	t.Execute(w, nil)
 }
 
-func result(w http.ResponseWriter, r *http.Request) {
+func result__(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	hoge := r.FormValue("hoge")
 	t, _ := template.ParseFiles("result.html")
 	t.Execute(w, hoge)
 }
 
-func main() {
+func main__() {
 
 	http.HandleFunc("/", index)
 	http.HandleFunc("/result", result)
