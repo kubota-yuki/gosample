@@ -7,9 +7,10 @@
     <title>Document</title>
 </head>
 <body>
-    <form action="/make" method="get">
-    <h1>テーブルを作成します</h1>
-    <input type="submit" value="テーブル作成">
-</form>
+    <form action="/create" method="post">
+        <label>ID<input type="text" name="id"></label><br>
+        <label>名前:<input type="text" name="name"></label>
+        <input type="submit" value="作成">
+    </form>
 </body>
 </html>

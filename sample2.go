@@ -4,7 +4,9 @@ import (
 	"database/sql"
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
+	"os"
 
 	_ "github.com/lib/pq"
 )
@@ -13,12 +15,6 @@ import (
 // 	t, _ := template.ParseFiles("template.html")
 // 	t.Execute(w, nil)
 // }
-
-func form(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFiles("template.html")
-	t.Execute(w, nil)
-
-}
 
 func del(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseFiles("dbcreate.html")
@@ -35,16 +31,22 @@ func result(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	server := http.Server{
-		Addr: "localhost:8080",
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
 	}
+	err := http.ListenAndServe(":postgres://sfvermagpqsqkg:3b1bf4a863bf4e5c19a4282babe673aad32f97ad76e9e2f7459d461488bda821@ec2-34-225-159-178.compute-1.amazonaws.com:5432/db2tj1kv4jlep0", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	http.HandleFunc("/form", form)
 	http.HandleFunc("/result", result)
 	http.HandleFunc("/make", make)
 	http.HandleFunc("/", dbtest)
 	http.HandleFunc("/init", del)
 	http.HandleFunc("/create", create)
-	server.ListenAndServe()
 }
 
 type User struct {
@@ -53,7 +55,7 @@ type User struct {
 }
 
 func dbtest(w http.ResponseWriter, r *http.Request) {
-	db, err := sql.Open("postgres", "user=postgres password=yuki2170286 dbname=testdb host=localhost port=5432 sslmode=disable")
+	db, err := sql.Open("postgres", "user=sfvermagpqsqkg password=3b1bf4a863bf4e5c19a4282babe673aad32f97ad76e9e2f7459d461488bda821 dbname=db2tj1kv4jlep0 host=localhost port=5432 sslmode=disable")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -81,7 +83,7 @@ func make(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close() // 関数がリターンする直前に呼び出される
 
-	rows, err := db.Query("truncate table testtable")
+	rows, err := db.Query("delete * from testtable")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -107,5 +109,24 @@ func create(w http.ResponseWriter, r *http.Request) {
 	defer rows.Close()
 	t, _ := template.ParseFiles("success.html")
 	t.Execute(w, nil)
+
+}
+
+func form(w http.ResponseWriter, r *http.Request) {
+
+	t, _ := template.ParseFiles("make.html")
+	t.Execute(w, nil)
+	db, err := sql.Open("postgres", "user=postgres password=yuki2170286 dbname=testdb host=localhost port=5432 sslmode=disable")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close() // 関数がリターンする直前に呼び出される
+
+	rows, err := db.Query("create table testtable (id varchar(10),name varchar(20),population int,date_mod date)")
+	if err != nil {
+		panic(err.Error())
+	}
+
+	defer rows.Close()
 
 }
